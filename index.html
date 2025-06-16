@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>The Underground Lair - DJ Ticket Release</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(to bottom, #000, #fff);
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .card {
+        background-color: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        padding: 2rem;
+        width: 400px;
+        text-align: center;
+      }
+
+      h1 {
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+      }
+
+      p.subtitle {
+        margin: 0;
+        font-size: 1rem;
+        color: #444;
+      }
+
+      .event-details {
+        margin-top: 1rem;
+        font-size: 0.95rem;
+        color: #555;
+      }
+
+      label {
+        position: absolute;
+        left: -9999px;
+      }
+
+      input[type="email"] {
+        width: 100%;
+        padding: 0.6rem;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        margin: 1rem 0;
+        font-size: 1rem;
+      }
+
+      button {
+        width: 100%;
+        padding: 0.75rem;
+        background: linear-gradient(to right, #6e77f2, #7e3ff2);
+        border: none;
+        border-radius: 6px;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 1rem;
+      }
+
+      .ticket-counter {
+        font-size: 0.9rem;
+        color: #333;
+        margin-top: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>The Underground Lair</h1>
+      <p class="subtitle">5th Birthday – Live Event (DJ Tickets Only)</p>
+
+      <div class="event-details">
+        <p>🕗 8PM – 6AM, 27th September 2025</p>
+        <p>📍 The Unit, Pye Bridge Industrial Estate</p>
+      </div>
+
+      <form id="ticketForm">
+        <label for="email">Email Address</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="Enter your email"
+          required
+        />
+        <button type="submit">Download My Ticket</button>
+      </form>
+
+      <div class="ticket-counter" id="ticketCounter">🎟️ Tickets Remaining: 20</div>
+    </div>
+
+    <script>
+      let ticketCount = 0;
+      const maxTickets = 20;
+
+      function updateCounter() {
+        const counterEl = document.getElementById("ticketCounter");
+        const remaining = maxTickets - ticketCount;
+        counterEl.textContent = `🎟️ Tickets Remaining: ${remaining}`;
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const form = document.getElementById("ticketForm");
+
+        form.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const emailInput = document.getElementById("email");
+          const email = emailInput.value.trim();
+
+          if (!email) return alert("Please enter a valid email address.");
+
+          if (email.toLowerCase() === "reset@tickets.com") {
+            ticketCount = 0;
+            updateCounter();
+            alert("🎫 Ticket counter reset to 20.");
+            emailInput.value = "";
+            return;
+          }
+
+          if (ticketCount >= maxTickets) {
+            alert("❌ No more tickets in this batch.");
+            return;
+          }
+
+          ticketCount++;
+          updateCounter();
+
+          const entranceCode = `UGL-${Math.floor(100000 + Math.random() * 900000)}`;
+
+          const ticketText = `🎟️ THE UNDERGROUND LAIR - DJ TICKET
+
+🧾 ADMIT ONE – LIMITED BATCH
+📧 Registered To: ${email}
+
+🗓️ Saturday, 27th September 2025
+⏱️ 20:00 – 06:00
+📍 The Unit, Pye Bridge Industrial Estate
+
+🔐 ENTRANCE CODE: ${entranceCode}
+🎵 Drum and Bass, Hardcore, Jungle and Alternative Beats
+
+🌀 See you on the darkside.
+`;
+
+          const blob = new Blob([ticketText], { type: "text/plain" });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = "Underground-Lair-Ticket.txt";
+          document.body.appendChild(link);
+          link.click();
+          URL.revokeObjectURL(url);
+          link.remove();
+
+          emailInput.value = "";
+        });
+
+        updateCounter(); // initial count
+      });
+    </script>
+  </body>
+</html>
