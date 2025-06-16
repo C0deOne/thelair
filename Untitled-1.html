@@ -1,0 +1,154 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>The Underground Lair - DJ Ticket Release</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(to bottom, #000, #fff);
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .card {
+        background-color: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        padding: 2rem;
+        width: 400px;
+        text-align: center;
+      }
+
+      h1 {
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+      }
+
+      p.subtitle {
+        margin: 0;
+        font-size: 1rem;
+        color: #444;
+      }
+
+      .event-details {
+        margin-top: 1rem;
+        font-size: 0.95rem;
+        color: #555;
+      }
+
+      label {
+        position: absolute;
+        left: -9999px;
+      }
+
+      input[type="email"] {
+        width: 100%;
+        padding: 0.6rem;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        margin: 1rem 0;
+        font-size: 1rem;
+      }
+
+      button {
+        width: 100%;
+        padding: 0.75rem;
+        background: linear-gradient(to right, #6e77f2, #7e3ff2);
+        border: none;
+        border-radius: 6px;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 1rem;
+      }
+
+      .footer-note {
+        margin-top: 2rem;
+        font-size: 0.85rem;
+        color: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>The Underground Lair</h1>
+      <p class="subtitle">5th Birthday – Live Event (DJ Tickets Only)</p>
+
+      <div class="event-details">
+        <p>🕗 8PM – 6AM, 27th September 2025</p>
+        <p>📍 @The Unit, Pye Bridge Industrial Estate, Derby, DE55 4NX</p>
+      </div>
+
+      <form id="ticketForm">
+        <label for="email">Email Address</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="Enter your email"
+          required
+        />
+        <button type="submit">Download My Ticket</button>
+      </form>
+
+      <div class="footer-note">DJ plus one tickets releasing soon</div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const form = document.getElementById("ticketForm");
+        form.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const emailInput = document.getElementById("email");
+          const email = emailInput.value.trim();
+
+          if (!email) return alert("Please enter a valid email address.");
+
+          const entranceCode = `UGL-X5-${Math.floor(Math.random() * 9999)
+            .toString()
+            .padStart(4, "0")}`;
+
+          const ticketContent = `
+🕳️ THE UNDERGROUND LAIR 🕳️
+
+🧾 ACCESS PASS: DJ TICKET (ADMIT ONE)
+📧 Registered To: ${email}
+
+🗓️ Date: Saturday, 27th September 2025
+🕗 Entry From: 20:00 — Exit by 06:00
+📍 Location: The Unit, Pye Bridge Industrial Estate, Derby, DE55 4NX
+
+🔐 ENTRANCE CODE: ${entranceCode}
+🎵 Music: Drum and Bass, Hardcore, Jungle and Alternative Beats
+
+🌀 You can enter the depths.
+`;
+
+          const blob = new Blob([ticketContent], { type: "text/plain" });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+
+          link.href = url;
+          link.download = "Underground-Lair-Ticket.txt";
+          document.body.appendChild(link);
+          link.click();
+
+          URL.revokeObjectURL(url);
+          link.remove();
+          emailInput.value = "";
+        });
+      });
+    </script>
+  </body>
+</html>
