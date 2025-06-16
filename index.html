@@ -1,5 +1,3 @@
----
----
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -73,10 +71,10 @@
         font-size: 1rem;
       }
 
-      .footer-note {
-        margin-top: 2rem;
-        font-size: 0.85rem;
-        color: #555;
+      .ticket-counter {
+        font-size: 0.9rem;
+        color: #333;
+        margin-top: 1rem;
       }
     </style>
   </head>
@@ -87,7 +85,7 @@
 
       <div class="event-details">
         <p>🕗 8PM – 6AM, 27th September 2025</p>
-        <p>📍 @The Unit, Pye Bridge Industrial Estate, Derby, DE55 4NX</p>
+        <p>📍 The Unit, Pye Bridge Industrial Estate</p>
       </div>
 
       <form id="ticketForm">
@@ -102,12 +100,22 @@
         <button type="submit">Download My Ticket</button>
       </form>
 
-      <div class="footer-note">DJ plus one tickets releasing soon</div>
+      <div class="ticket-counter" id="ticketCounter">🎟️ Tickets Remaining: 20</div>
     </div>
 
     <script>
+      let ticketCount = 0;
+      const maxTickets = 20;
+
+      function updateCounter() {
+        const counterEl = document.getElementById("ticketCounter");
+        const remaining = maxTickets - ticketCount;
+        counterEl.textContent = `🎟️ Tickets Remaining: ${remaining}`;
+      }
+
       document.addEventListener("DOMContentLoaded", () => {
         const form = document.getElementById("ticketForm");
+
         form.addEventListener("submit", (e) => {
           e.preventDefault();
           const emailInput = document.getElementById("email");
@@ -115,39 +123,53 @@
 
           if (!email) return alert("Please enter a valid email address.");
 
-          const entranceCode = `UGL-X5-${Math.floor(Math.random() * 9999)
-            .toString()
-            .padStart(4, "0")}`;
+          if (email.toLowerCase() === "reset@tickets.com") {
+            ticketCount = 0;
+            updateCounter();
+            alert("🎫 Ticket counter reset to 20.");
+            emailInput.value = "";
+            return;
+          }
 
-          const ticketContent = `
-🕳️ THE UNDERGROUND LAIR 🕳️
+          if (ticketCount >= maxTickets) {
+            alert("❌ No more tickets in this batch.");
+            return;
+          }
 
-🧾 ACCESS PASS: DJ TICKET (ADMIT ONE)
+          ticketCount++;
+          updateCounter();
+
+          const entranceCode = `UGL-${Math.floor(100000 + Math.random() * 900000)}`;
+
+          const ticketText = `🎟️ THE UNDERGROUND LAIR - DJ TICKET
+
+🧾 ADMIT ONE – LIMITED BATCH
 📧 Registered To: ${email}
 
-🗓️ Date: Saturday, 27th September 2025
-🕗 Entry From: 20:00 — Exit by 06:00
-📍 Location: The Unit, Pye Bridge Industrial Estate, Derby, DE55 4NX
+🗓️ Saturday, 27th September 2025
+⏱️ 20:00 – 06:00
+📍 The Unit, Pye Bridge Industrial Estate
 
 🔐 ENTRANCE CODE: ${entranceCode}
-🎵 Music: Drum and Bass, Hardcore, Jungle and Alternative Beats
+🎵 Drum and Bass, Hardcore, Jungle and Alternative Beats
 
-🌀 You can enter the depths.
+🌀 See you on the darkside.
 `;
 
-          const blob = new Blob([ticketContent], { type: "text/plain" });
+          const blob = new Blob([ticketText], { type: "text/plain" });
           const url = URL.createObjectURL(blob);
           const link = document.createElement("a");
-
           link.href = url;
           link.download = "Underground-Lair-Ticket.txt";
           document.body.appendChild(link);
           link.click();
-
           URL.revokeObjectURL(url);
           link.remove();
+
           emailInput.value = "";
         });
+
+        updateCounter(); // initial count
       });
     </script>
   </body>
