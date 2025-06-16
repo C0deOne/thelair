@@ -16,6 +16,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        padding: 1rem;
       }
 
       .card {
@@ -23,7 +24,8 @@
         border-radius: 16px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         padding: 2rem;
-        width: 400px;
+        width: 100%;
+        max-width: 400px;
         text-align: center;
       }
 
@@ -71,10 +73,10 @@
         font-size: 1rem;
       }
 
-      .ticket-counter {
-        font-size: 0.9rem;
-        color: #333;
+      .message {
         margin-top: 1rem;
+        color: #d00;
+        font-weight: bold;
       }
     </style>
   </head>
@@ -84,7 +86,6 @@
       <p class="subtitle">5th Birthday – Live Event (DJ Tickets Only)</p>
 
       <div class="event-details">
-        <p>🕗 8PM – 6AM, 27th September 2025</p>
         <p>📍 The Unit, Pye Bridge Industrial Estate</p>
       </div>
 
@@ -98,78 +99,81 @@
           required
         />
         <button type="submit">Download My Ticket</button>
+        <div class="message" id="message"></div>
       </form>
-
-      <div class="ticket-counter" id="ticketCounter">🎟️ Tickets Remaining: 20</div>
     </div>
 
     <script>
-      let ticketCount = 0;
-      const maxTickets = 20;
-
-      function updateCounter() {
-        const counterEl = document.getElementById("ticketCounter");
-        const remaining = maxTickets - ticketCount;
-        counterEl.textContent = `🎟️ Tickets Remaining: ${remaining}`;
-      }
+      let maxTickets = 20;
+      const claimedEmails = new Set();
 
       document.addEventListener("DOMContentLoaded", () => {
         const form = document.getElementById("ticketForm");
+        const messageDiv = document.getElementById("message");
 
         form.addEventListener("submit", (e) => {
           e.preventDefault();
+
           const emailInput = document.getElementById("email");
-          const email = emailInput.value.trim();
+          const email = emailInput.value.trim().toLowerCase();
 
-          if (!email) return alert("Please enter a valid email address.");
-
-          if (email.toLowerCase() === "reset@tickets.com") {
-            ticketCount = 0;
-            updateCounter();
-            alert("🎫 Ticket counter reset to 20.");
+          // Reset trigger
+          if (email === "reset@tickets.com") {
+            claimedEmails.clear();
+            maxTickets = 20;
+            messageDiv.textContent = "🎫 Ticket batch has been reset.";
             emailInput.value = "";
             return;
           }
 
-          if (ticketCount >= maxTickets) {
-            alert("❌ No more tickets in this batch.");
+          if (maxTickets <= 0) {
+            messageDiv.textContent = "No more tickets in this batch.";
             return;
           }
 
-          ticketCount++;
-          updateCounter();
+          if (claimedEmails.has(email)) {
+            messageDiv.textContent = "You have already claimed a ticket.";
+            return;
+          }
 
+          // Generate entrance code
           const entranceCode = `UGL-${Math.floor(100000 + Math.random() * 900000)}`;
 
-          const ticketText = `🎟️ THE UNDERGROUND LAIR - DJ TICKET
+          const ticketContent = `
+🕳️ THE UNDERGROUND LAIR 🕳️
 
-🧾 ADMIT ONE – LIMITED BATCH
+🧾 ACCESS PASS: DJ TICKET (ADMIT ONE)
 📧 Registered To: ${email}
 
-🗓️ Saturday, 27th September 2025
-⏱️ 20:00 – 06:00
-📍 The Unit, Pye Bridge Industrial Estate
+🗓️ Date: Saturday, 27th September 2025
+⏱️ Time: 20:00 – 06:00
+📍 Location: The Unit, Pye Bridge Industrial Estate
 
 🔐 ENTRANCE CODE: ${entranceCode}
-🎵 Drum and Bass, Hardcore, Jungle and Alternative Beats
+🎵 Music: Drum and Bass, Hardcore, Jungle and Alternative Beats
 
 🌀 See you on the darkside.
 `;
 
-          const blob = new Blob([ticketText], { type: "text/plain" });
+          // Create and trigger download
+          const blob = new Blob([ticketContent], { type: "text/plain" });
           const url = URL.createObjectURL(blob);
           const link = document.createElement("a");
+
           link.href = url;
           link.download = "Underground-Lair-Ticket.txt";
           document.body.appendChild(link);
           link.click();
+
           URL.revokeObjectURL(url);
           link.remove();
 
+          // Update state
+          claimedEmails.add(email);
+          maxTickets--;
+          messageDiv.textContent = "🎟️ Ticket downloaded.";
           emailInput.value = "";
         });
-
-        updateCounter(); // initial count
       });
     </script>
   </body>
